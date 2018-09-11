@@ -13,7 +13,7 @@ var svg = d3.select("body").append("svg")
 // Define the div for the tooltip
 var div = d3.select("body").append("div")
     .attr("class", "tooltip")
-    .style("opacity", ".5");
+    .style("opacity", ".9");
 
 
 d3.csv("assets/data/data.csv")
@@ -41,9 +41,24 @@ d3.csv("assets/data/data.csv")
             
             .domain(d3.extent(poverty_stats))
             .range([width, 0])
-        let yAxis = d3.axisLeft(yScale)
+        let yAxis = d3.axisLeft(yScale);
+
+         // Initialize tooltip 
+        var toolTip = d3
+            .tip()
+            .attr("class", "tooltip")
+            .offset([80, -60])
+            .html(function(data) {
+                var stateName = d.state;
+                var pov = +d.poverty;
+                var physAct = +d.healthcare;
+                return (
+                    stateName + '<br> Poverty: ' + pov + '% <br> Physically Active: ' + physAct +'%'
+        );
+    });
         
-        // Genreate the X data - 
+        
+        // Generate the X data - 
         svg.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(1," + height + ")")
@@ -53,8 +68,10 @@ d3.csv("assets/data/data.csv")
             .attr("x", width)
             .attr("y", -6)
             .style("text-anchor", "end")
-            .style("fill", "red")
+            .style("fill", "blue")
+            .style("font-size", "15px")
             .text("Lacks in Healthcare (%)");
+           
 
         svg.append("g")
             .attr("class", "y axis")
@@ -65,7 +82,8 @@ d3.csv("assets/data/data.csv")
             .attr("y", 6)
             .attr("dy", ".71em")
             .style("text-anchor", "end")
-            .style("fill", "red")
+            .style("fill", "blue")
+            .style("font-size", "15px")
             .text("In Poverty (%)")
 
 
@@ -73,11 +91,11 @@ d3.csv("assets/data/data.csv")
             .data(data)
             .enter()
             .append("circle")
-            .attr("fill", "blue")
+            .attr("fill", "lightblue")
             .attr("r", "55")
             .attr("class", "box")
           
-            .attr("r", 3)
+            .attr("r", "8")
             .attr("cx", d => xScale(d.obesity)) 
             .attr("cy", d => yScale(d.poverty))
             // .style("fill", function (d) { return color(d.species); });
@@ -94,9 +112,9 @@ d3.csv("assets/data/data.csv")
             .on("mouseout", function (d) {
                 div.transition()
                     .duration(500)
-                    .style("opacity", ".5");
+                    .style("opacity", "1");
             });
-            // Initialize tooltip 
+    //         // Initialize tooltip 
     // var toolTip = d3
     // .tip()
     // .attr("class", "tooltip")
@@ -109,4 +127,4 @@ d3.csv("assets/data/data.csv")
     //         stateName + '<br> Poverty: ' + pov + '% <br> Physically Active: ' + physAct +'%'
     //     );
     // });
-    })
+    });
